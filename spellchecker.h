@@ -13,15 +13,6 @@
 #include <iostream>
 
 /*
- * Function: spellChecker
- * Usage: vector<string> mispelledWords = spellCheck(document, dictionary);
- * ------------------------------------------------------------------------
- *  Returns a vector containing all mispelled words in the document checked
- *  against the dictionary
- */
-std::vector<std::string> *spellCheck(std::string document, std::string dictionary);
-
-/*
  * Funtion: createDictionary
  * Usage: TrieNode *dictionary = createDictionary(fileName);
  * ---------------------------------------------------------
@@ -32,6 +23,16 @@ std::vector<std::string> *spellCheck(std::string document, std::string dictionar
 TrieNode *createDictionary(std::string dictionary);
 
 /*
+ * Function: spellChecker
+ * Usage: vector<string> mispelledWords = spellCheck(document, dictionary, mispelledWords);
+ * ------------------------------------------------------------------------
+ *  Porpulates mispelledWords vector with all mispelled words in the document checked
+ *  against the dictionary
+ */
+
+void spellCheck(std::string document, std::string dictionary, std::vector<std::string> &mispelledWords);
+
+/*
  * Function: spellCheckLine
  * Usage: spellCheck(mispelledWords, dictionary, line);
  * --------------------------
@@ -39,16 +40,14 @@ TrieNode *createDictionary(std::string dictionary);
  * vecotore with mispelled words from line
  */
 
-void spellCheckLine(std::vector<std::string> *mispelledWords, TrieNode *dictionary, 
+void spellCheckLine(std::vector<std::string> &mispelledWords, TrieNode *dictionary, 
 		    std::string line);
 
 /* Funtion Implementations */
 
 
-std::vector<std::string> *spellCheck(std::string document, std::string dictionaryFile) {
+void spellCheck(std::string document, std::string dictionaryFile, std::vector<std::string> &mispelledWords) {
 	TrieNode *dictionary = createDictionary(dictionaryFile);
-	
-	std::vector<std::string> *mispelledWords;
 
 	std::ifstream infile;
 	infile.open(document.c_str());
@@ -56,19 +55,15 @@ std::vector<std::string> *spellCheck(std::string document, std::string dictionar
 	while(getline(infile, line)) {
 		spellCheckLine(mispelledWords, dictionary, line);
 	}
-
-	return mispelledWords;
 }
 
-void spellCheckLine(std::vector<std::string> *mispelledWords, TrieNode *dictionary, std::string line) {
-	std::vector<std::string> words;
+void spellCheckLine(std::vector<std::string> &words, TrieNode *dictionary, std::string line) {
 	char * str = new char [line.length()+1];
 	strcpy (str, line.c_str());
 	char * token = strtok(str, " ,.-");
 	while (token != NULL) {	
 		if(!search(dictionary, token)) {
 			words.push_back(token);
-			std::cout << token << std::endl;
 		}
 		token = strtok (NULL, " ,.-");
 	}
